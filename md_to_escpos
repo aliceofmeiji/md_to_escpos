@@ -1,0 +1,49 @@
+#!/bin/sh
+
+iconv -f UTF-8 -t CP860 |\
+
+awk '
+/^# /	{ printf("\x1B\x21\x30"); sub(/^#* /,""); print; next }
+/^## /	{ printf("\x1B\x21\x20"); sub(/^#* /,""); print; next }
+/^### /	{ printf("\x1B\x21\x10"); sub(/^#* /,""); print; next }
+	{ printf("\x1B\x21\x00"); print; next }
+END	{ printf("\x1B\x21\x00") }
+' | awk '
+BEGIN	{ printf("\x1B\x74\x03") }
+	{
+		nbolds = split($0, bolds, "*")
+		for(i = 0; i <= nbolds; i++)
+		{
+			if(i % 2) { line = line bolds[i] }
+			else { line = line "\x1B\x45\x01" bolds[i] "\x1B\x45\x00" }
+		}
+		$0 = line
+		line = ""
+	}
+	{
+		nunder = split($0, under, "_")
+		for(i = 0; i <= nunder; i++)
+		{
+			if(i % 2) { line = line under[i] }
+			else { line = line "\x1B\x2D\x01" under[i] "\x1B\x2D\x00" }
+		}
+		$0 = line
+		line = ""
+	}
+	{ print }
+'
+
+
+
+#if(nsemb > 0 || nsb > 0)
+#{
+	#nbolds = split($0, bolds, "<b>")
+	#for(i = 0; i <= nbolds; i++)
+	#{
+		#if(i % 2 == 1) { line = line bolds[i] }
+		#else { line = line "<b>" bolds[i] "</b>" }
+	#}
+	#$0 = line
+	#line = ""
+#}
+
