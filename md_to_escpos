@@ -32,18 +32,3 @@ BEGIN	{ printf("\x1B\x74\x03") }
 	}
 	{ print }
 '
-
-
-
-#if(nsemb > 0 || nsb > 0)
-#{
-	#nbolds = split($0, bolds, "<b>")
-	#for(i = 0; i <= nbolds; i++)
-	#{
-		#if(i % 2 == 1) { line = line bolds[i] }
-		#else { line = line "<b>" bolds[i] "</b>" }
-	#}
-	#$0 = line
-	#line = ""
-#}
-
